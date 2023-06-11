@@ -8,6 +8,7 @@
 
 body, button, input{
   font-family: "Josefin Sans", "sans-serif";
+  color: white;
 }
 
 body{
@@ -25,6 +26,7 @@ body{
   gap: 1rem;
   align-items: center;
   background-color: #131324;
+  color: white;
   
 }
 
@@ -39,3 +41,65 @@ body{
   }
 }
 
+.contacts-menu{
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  overflow-y: scroll;
+ 
+ 
+}
+
+.contact{
+  background-color: #525269;
+  min-height: 5rem;
+  cursor: pointer;
+  width: 90%;
+  border-radius: 0.2rem;
+  padding: 0.4rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  transition: 0.5s ease-in-out;
+}
+
+.contact-selected{
+  background-color: #525299;
+}
+
+.chat-menu{
+  display: flex;
+  flex-direction: column;
+  justify-content:space-between;
+  height: 100%;
+
+}
+
+.user{
+  color: #4e00ff;
+}
+
+.current-chat{
+  padding: 2.5rem ;
+}
+
+.logout{
+  position: fixed;
+  right: 0;
+  top: 0;
+  padding: 1.7rem;
+}
+
+.send-icon{
+  width: 1.4rem;
+}
+
+.form-chat{
+  display: flex;
+  flex-direction: row;
+}
+.messages{
+  height: 100%;
+  width: 100%;
+}
