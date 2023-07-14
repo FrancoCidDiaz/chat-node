@@ -30,7 +30,7 @@ export const login = async (req, res, next) => {
         if(!isValidPassword)
             return res.status(401).json({msg: "Incorrect password", status: false})   
         delete user.password
-        console.log(user)
+        //console.log(user)
         return res.json({ status: true, user })                      
     } catch (error) {
         next(error)
@@ -74,7 +74,7 @@ export const getUser = async (req, res, next) => {
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
-    console.log(users);
+    //console.log(users);
     res.json({ users });
   } catch (error) {
     console.log(error);

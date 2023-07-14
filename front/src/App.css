@@ -12,9 +12,9 @@ body, button, input{
 }
 
 body{
-  max-width: 100vw;
-  max-height: 100vh;
-  overflow: hidden
+  height: 100%;
+  overflow: hidden;
+
 }
 
 .chat-container{
@@ -30,14 +30,32 @@ body{
   
 }
 
+
+
 .container-chat {
   height: 85vh;
   width: 85vw;
   background-color: #00000076;
   display: grid;
   grid-template-columns: 25% 75%;
-  @media screen and (min-width: 720px) and (max-width: 1080px) {
-    grid-template-columns: 35% 65%;
+  
+  
+  
+}
+
+.input-chat {
+  width: 100%;
+  width: 100%;
+
+}
+
+
+
+.container-chat-responsive {
+  display: grid;
+  grid-template-columns: 1fr;
+  @media screen and (max-width: 500px){
+    width: 100%!important;
   }
 }
 
@@ -49,6 +67,27 @@ body{
   overflow: auto;
  
  
+}
+
+.contacts-menu-full-width {
+  width: 100%;
+}
+
+.contacts-menu-hidden {
+  display: none;
+}
+
+.messages-hidden {
+  display: none;
+}
+
+.messages-full-width {
+  width: 100%;
+  overflow: auto;
+}
+
+.contacts-hidden{
+  display: none;
 }
 
 .contact{
@@ -74,7 +113,6 @@ body{
   justify-content:space-between;
   height: 100%;
   overflow: auto;
-  max-height: 75%;
 
 }
 
@@ -87,25 +125,36 @@ body{
 }
 
 .logout{
-  position: fixed;
-  right: 0;
-  top: 0;
-  padding: 1.7rem;
+  padding: 1rem;
+ 
+}
+
+.contacts-button{
+ padding: 1rem;
+
 }
 
 .send-icon{
-  width: 1.4rem;
+  /* width: 1.4rem; */
 }
 
 .form-chat{
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 90% 10%;
+  justify-content: center;
+  width: 100%;
+  @media screen and(max-width: 500px){
+    margin: 0;
+    grid-template-columns: 85% 15%;
+  
+  }
 }
 .messages{
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: auto;
   
   
   
@@ -136,4 +185,27 @@ body{
   padding: 1rem;
   border-radius: 1rem;
   margin-bottom: 0.7rem;
+}
+
+.container-titulo {
+  text-align: center;
+}
+
+.container-buttons {
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between!important;
+  gap: 8rem;
+  @media only screen and (max-width: 400px) {
+  gap: 4rem;
+  }
+ 
+}
+
+.robot {
+  
+
+  @media only screen and (max-width: 575px) {
+    width: 75%;
+  }
 }

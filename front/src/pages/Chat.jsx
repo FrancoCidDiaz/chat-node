@@ -13,7 +13,7 @@ import { io } from 'socket.io-client'
 
 const Chat = () => {
   const navigate = useNavigate() 
-  const socket = useRef()
+  const socket = io();
   const scrollRef = useRef()
   const [isLoading, setIsLoading] = useState(true);
   const [contacts, setContacts] = useState([])
@@ -33,14 +33,20 @@ const Chat = () => {
     email: userEmail,
     username: userUsername
   })
-
+  const [responsive, setResponsive] = useState(false)
+  const [showResponsiveContacts, setShowResponsiveContacts] = useState(false)
   
-   
+  const logout = () => {
+    localStorage.removeItem("chat-app-user");
+    navigate("/login")
+  } 
 
    useEffect(() => {
     if(!localStorage.getItem("chat-app-user")){
       navigate("/login")
      }
+     const screenWidth = window.innerWidth;
+     setResponsive(screenWidth <= 700);
     const fetchUsers = async () => {
 
      try {
@@ -62,13 +68,60 @@ const Chat = () => {
 
 
     fetchUsers()
-   
+    
   }, [])
+
+
+
+  const handleSendMsg = async(msg) => {
+    console.log("enviado")
+    console.log("MSG:", msg)
+  
+    await axios.post(sendMessageRoute,{
+      from: userId,
+      to: currentChat.id,  
+      message: msg
+    }) 
+    socket.current = io(host);
+    socket.current.on("connect", () => {
+      
+      console.log(socket.current.id); // x8WIv7-mJelg7on_ALbx
+      console.log('DESDE CONNECT DEL FRONT')
+    });
+    
+    if(user) {
+      socket.current.emit("add-user", user.id)
+    }
+
+    if (socket.current) {
+      socket.current.on("msg-recieve", (msg) => {
+        console.log("MSG DESDE MSG-RECIEVED", msg)
+         setArrivalMessage({ from: currentChat, message: msg });
+       });
+     }
+    
+       socket.current.emit("send-msg", {
+        to: currentChat.id,
+        from: user.id,
+        message: msg
+        })
+        console.log("MSG DESDE SEND-MSG FRONT", msg)
+
+            const msgs = [...messages]
+       msgs.push({ from: user.username, message: msg })
+      setMessages(msgs)
+   }
+
+  
 
   const getUsername = (userId) => {
     const contact = contacts.find((contact) => contact._id === userId);
     return contact ? contact.username : "";
   };
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   useEffect(() => {
      const getMsgs = async() => {
@@ -87,6 +140,10 @@ const Chat = () => {
      getMsgs()
      
   }, [currentChat])
+
+  useEffect(() => {
+    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
   
 
   const changeCurrentChat = (index, contact) => {
@@ -96,7 +153,7 @@ const Chat = () => {
       username: contact.username
     })
     setwelcome(false)
-    
+    setShowResponsiveContacts(false)
   }
 
   if(isLoading) {
@@ -107,69 +164,30 @@ const Chat = () => {
     )
   }
 
-  const logout = () => {
-    localStorage.removeItem("chat-app-user");
-    navigate("/login")
-  }
-  
-  // useEffect(() => {
-  //   if(user) {
-  //     socket.current = io(host)
-  //     socket.current.emit("add-user", user.id)
-  //   }
 
-    
-    
-  // }, [user])
-
-  const handleSendMsg = async(msg) => {
-    console.log("enviado")
-    await axios.post(sendMessageRoute,{
-      from: userId,
-      to: currentChat.id,
-      message: msg
-    })
-    //  socket.current.emit("send.msg", {
-    //    to: currentChat.id,
-    //    from: user.id,
-    //    message: msg
-    //  })
-
-    //  const msgs = [...messages]
-    //  msgs.push({ fromSelf: true, message: msg })
-    //  setMessages(msgs)
-  }
-
-  //  useEffect(() => {
-  //    if (socket.current) {
-  //     socket.current.on("msg-recieve", (msg) => {
-  //        setArrivalMessage({ fromSelf: false, message: msg });
-  //      });
-  //    }
-  //  }, []);
-
-  //  useEffect(() => {
-  //    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-  //  }, [arrivalMessage]);
-
-  //  useEffect(() => {
-  //    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  //  }, [messages]);
- 
-  console.log(messages)
   return (
     <div className='chat-container'>
-      <div onClick={logout} className='logout'>Logout</div>
-      <div className='container-chat'>
-        { <div className='contacts-menu'>
+
+      <div className='container-buttons'>
+      {responsive &&    
+       <button onClick={() => setShowResponsiveContacts(!showResponsiveContacts)} className='contacts-button'>CONTACTS</button>   
+       }
+
+
+        <button onClick={logout} className='logout'>LOGOUT</button> 
+      </div>
+     
+     
+      <div className={`container-chat ${showResponsiveContacts ? 'container-chat-responsive' : 'container-chat-responsive'}`}>
+        { <div className={`contacts-menu ${showResponsiveContacts && responsive ? 'contacts-menu-full-width' : 'contacts-menu-hidden'}`}>
           {contacts.map((contact, index) => (
-         <div onClick={() => changeCurrentChat(index, contact)} className={`contact ${contact.username === currentChat.username ? "contact-selected" : ""}`} key={index}>{contact.username}</div>   
+         <div onClick={() => changeCurrentChat(index, contact)} className={`contact ${contact.username === currentChat.username ? "contact-selected" : ""}  ${showResponsiveContacts ? '' : 'contacts-hidden'}`} key={index}>{contact.username}</div>   
         ))}</div>  }
-        <div className="">
+        <div className={`${showResponsiveContacts ? 'messages-hidden' : 'messages-full-width'}`}>
                        
-          {welcome &&  <div> 
-            <img src={Robot} alt="" />
-            <h1>Welcome! <p className='user'>{user.username}</p></h1>
+          {welcome &&  <div className='container-titulo'> 
+            <img className='robot' src={Robot} alt="" />
+            <h1 className=''>Welcome! <p className='user'>{user.username}</p></h1>
             <p>Please select a chat to Start Messaging</p>
             </div>}
             {!welcome && <div className='chat-menu'>

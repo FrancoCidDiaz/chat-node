@@ -45,20 +45,69 @@ const io = new Server(server, {
       credentials: true,
     },
   });
-  
-  global.onlineUsers = new Map();
 
-  io.on("connection", (socket) => {
-    global.chatSocket = socket;
-    socket.on("add-user", (userId) => {
-    onlineUsers.set(userId, socket.id);
+
+
+  // io.on("connection", (socket) => {
+  //   global.chatSocket = socket;
+  //   socket.on("add-user", (userId) => {
+  //   onlineUsers.set(userId, socket.id);
+  //   }
+  
+    global.onlineUsers = new Map();
+    io.on("connection", (socket) => {
+      console.log("CONEXION SOCKET EXITOSA CONEXION SOCKET EXITOSA CONEXION SOCKET EXITOSA ")
+      console.log(socket.id);
+      global.chatSocket = socket;
+    
+      socket.on("add-user", (userId) => {
+        onlineUsers.set(userId, socket.id);
+        console.log("ADD-USER USERID:", userId)
+        console.log("online users desde add-user", onlineUsers)
       })
-   
-  socket.on("send-msg", (data) => {
-    console.log(message)
-    const sendUserSocket = onlineUsers.get(data.to);
-    if (sendUserSocket) {
-    socket.to(sendUserSocket).emit("msg-recieve", data.message);
-        }
-      });   
-    })
+      
+
+
+       socket.on('send-msg', (data) => {
+        console.log("SEND-MSG")
+        console.log(data)
+        //onlineUsers.get
+         const sendUserSocket = (data.to);
+         console.log("data to:", data.to)
+         console.log("SEND USER SOCKET", sendUserSocket)
+         if (sendUserSocket) {
+            socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+            console.log("msg-receive exitoso")
+          }
+
+       })
+
+
+      //  global.onlineUsers = new Map();
+      //  io.on("connection", (socket) => {
+      //    global.chatSocket = socket;
+      //    socket.on("add-user", (userId) => {
+      //      onlineUsers.set(userId, socket.id);
+      //    });
+
+      //    socket.on("send-msg", (data) => {
+      //      const sendUserSocket = onlineUsers.get(data.to);
+      //      if (sendUserSocket) {
+      //        socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+      //      }
+      //    });
+      //  });
+
+  // socket.on("send-msg", (data) => {
+  //   console.log("data.msg:", data.msg)
+  //   const sendUserSocket = onlineUsers.get(data.to);
+  //  if (sendUserSocket) {
+  //   socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+  //       }
+  //     });
+
+
+    });
+
+    io.listen(5173);
+

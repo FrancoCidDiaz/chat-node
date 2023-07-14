@@ -24,7 +24,7 @@ export const getMessages = async(req, res, next) => {
             $all: [from, to]
         },
       }).sort({ updatedAt: 1 }) 
-      console.log(messages)
+      //console.log(messages)
       const projectMessages = messages.map((msg) => {
         return {
             fromSelf: msg.send && msg.send.toString() === from, 
